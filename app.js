@@ -61,7 +61,9 @@ const UIController = (function() {
         inputType: document.querySelector('.add__type'),
         inputDescription: document.querySelector('.add__description'),
         inputValue: document.querySelector('.add__value'),
-        addButton: document.querySelector('.add__btn')
+        addButton: document.querySelector('.add__btn'),
+        incomeList: document.querySelector('.income__list'),
+        expenseList: document.querySelector('.expenses__list')
     }
 
     return {
@@ -70,6 +72,37 @@ const UIController = (function() {
                 type: DOMelements.inputType.value, // Will look at the value attribute (income or expense), not the property
                 description: DOMelements.inputDescription.value,
                 value: DOMelements.inputValue.value
+            }
+        },
+        addListItem: function(obj, type) {
+            let html
+
+            // Generate HTML string with obj.props added where necessary, and insert into DOM
+            if (type === 'income') {
+                html = `<div class="item clearfix" id="income-${obj.id}">
+                            <div class="item__description">${obj.description}</div>
+                            <div class="right clearfix">
+                                <div class="item__value">+ ${obj.value}</div>
+                                <div class="item__delete">
+                                    <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                                </div>
+                            </div>
+                        </div>`
+                
+                DOMelements.incomeList.innerHTML += html
+            } else if (type === 'expense') {
+                html = `<div class="item clearfix" id="expense-${obj.id}">
+                            <div class="item__description">${obj.description}</div>
+                            <div class="right clearfix">
+                                <div class="item__value">- ${obj.value}</div>
+                                <div class="item__percentage">21%</div>
+                                <div class="item__delete">
+                                    <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                                </div>
+                            </div>
+                        </div>`
+
+                DOMelements.expenseList.innerHTML += html 
             }
         },
         getDOMelements: function() {
@@ -108,6 +141,8 @@ const appController = (function(budgetCtrl, UICtrl) {
                 newItem = budgetCtrl.addItem(input.type, input.description, input.value)
 
             // 3. Add item to UI controller
+                UICtrl.addListItem(newItem, input.type)
+
             // 4. Calculate the budget
             // 5. Display budget on the UI
         }
