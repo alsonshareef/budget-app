@@ -63,7 +63,8 @@ const UIController = (function() {
         inputValue: document.querySelector('.add__value'),
         addButton: document.querySelector('.add__btn'),
         incomeList: document.querySelector('.income__list'),
-        expenseList: document.querySelector('.expenses__list')
+        expenseList: document.querySelector('.expenses__list'),
+        fields: document.querySelectorAll(`.add__description, .add__value`) // this prop selects both input description and value fields
     }
 
     return {
@@ -105,6 +106,17 @@ const UIController = (function() {
                 DOMelements.expenseList.innerHTML += html 
             }
         },
+        clearFields: () => {
+            let fieldsArray
+
+            fieldsArray = Array.prototype.slice.call(DOMelements.fields) // Turn DOMelements.fields list into an array using call to set 'this'
+
+            fieldsArray.forEach(field => { // Loops over each field and sets .value to empty string
+                field.value = ''
+            });
+
+            fieldsArray[0].focus() // Reset focus to description field for easy UX
+        },
         getDOMelements: function() {
             return DOMelements
         }
@@ -143,8 +155,11 @@ const appController = (function(budgetCtrl, UICtrl) {
             // 3. Add item to UI controller
                 UICtrl.addListItem(newItem, input.type)
 
-            // 4. Calculate the budget
-            // 5. Display budget on the UI
+            // 4. Clear input fields after adding item
+                UICtrl.clearFields()
+                
+            // 5. Calculate the budget
+            // 6. Display budget on the UI
         }
 
     // Initialization
