@@ -43,11 +43,14 @@ const budgetController = (function() {
                 newItem = new Income(id, desc, val)
             }
 
-            // Adds the newItem to its respective array in data structure
+            // Adds the newItem to its respective array in 'data' object
             data.allItems[type].push(newItem)
 
             // Returns the newItem to be used by other controllers
             return newItem
+        },
+        test: () => {
+            console.log(data)
         }
     }
 
@@ -72,7 +75,7 @@ const UIController = (function() {
             return {
                 type: DOMelements.inputType.value, // Will look at the value attribute (income or expense), not the property
                 description: DOMelements.inputDescription.value,
-                value: DOMelements.inputValue.value
+                value: Number(DOMelements.inputValue.value)
             }
         },
         addListItem: function(obj, type) {
@@ -142,6 +145,15 @@ const appController = (function(budgetCtrl, UICtrl) {
                 })
         }
 
+        let updateBudget = () => {
+
+            // 1. Calculate the budget
+                
+            // 2. Return budget
+            // 3. Display budget on the UI
+
+        }
+
     // Handles the input data
         let addItem = () => {
             let input, newItem
@@ -149,17 +161,21 @@ const appController = (function(budgetCtrl, UICtrl) {
             // 1. Gather input data
                 input = UICtrl.getInput()
 
-            // 2. Add item to budget controller
-                newItem = budgetCtrl.addItem(input.type, input.description, input.value)
+            if (input.description !== "" && input.value > 0) {
 
-            // 3. Add item to UI controller
-                UICtrl.addListItem(newItem, input.type)
-
-            // 4. Clear input fields after adding item
-                UICtrl.clearFields()
+                // 2. Add item to budget controller
+                    newItem = budgetCtrl.addItem(input.type, input.description, input.value)
+    
+                // 3. Add item to UI controller
+                    UICtrl.addListItem(newItem, input.type)
+    
+                // 4. Clear input fields after adding item
+                    UICtrl.clearFields()
                 
-            // 5. Calculate the budget
-            // 6. Display budget on the UI
+                // 5. Calculate and update budget
+                    updateBudget()
+
+            } 
         }
 
     // Initialization
