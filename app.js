@@ -90,13 +90,22 @@ const budgetController = (function() {
 const UIController = (function() {
 
     let DOMelements = {
+        // Input fields
         inputType: document.querySelector('.add__type'),
         inputDescription: document.querySelector('.add__description'),
         inputValue: document.querySelector('.add__value'),
         addButton: document.querySelector('.add__btn'),
+        fields: document.querySelectorAll(`.add__description, .add__value`), // this prop selects both input description and value fields
+
+        // UI Lists
         incomeList: document.querySelector('.income__list'),
         expenseList: document.querySelector('.expenses__list'),
-        fields: document.querySelectorAll(`.add__description, .add__value`) // this prop selects both input description and value fields
+        
+        // UI Budget labels
+        budgetValue: document.querySelector('.budget__value'),
+        budgetIncome: document.querySelector('.budget__income--value'),
+        budgetExpense: document.querySelector('.budget__expenses--value'),
+        budgetExpensePercentage: document.querySelector('.budget__expenses--percentage')
     }
 
     return {
@@ -107,6 +116,7 @@ const UIController = (function() {
                 value: Number(DOMelements.inputValue.value)
             }
         },
+
         addListItem: function(obj, type) {
             let html
 
@@ -138,6 +148,7 @@ const UIController = (function() {
                 DOMelements.expenseList.innerHTML += html 
             }
         },
+
         clearFields: () => {
             let fieldsArray
 
@@ -149,6 +160,23 @@ const UIController = (function() {
 
             fieldsArray[0].focus() // Reset focus to description field for easy UX
         },
+
+        displayBudget: (obj) => {
+
+            // Convert budget UI text to data in budgetController
+            DOMelements.budgetValue.textContent = `$${obj.budget}`
+            DOMelements.budgetIncome.textContent = `+ ${obj.totalIncome}`
+            DOMelements.budgetExpense.textContent = `- ${obj.totalExpense}`
+            
+            // Only displays expense percentage if income is greater than 0
+            if (obj.percentage < 0) {
+                DOMelements.budgetExpensePercentage.textContent = '-'
+            } else {
+                DOMelements.budgetExpensePercentage.textContent = `${obj.percentage}%`
+            }
+
+        },
+
         getDOMelements: function() {
             return DOMelements
         }
@@ -182,7 +210,7 @@ const appController = (function(budgetCtrl, UICtrl) {
                 let budget = budgetCtrl.getBudget()
 
             // 3. Display budget on the UI
-            console.log(budget)
+                UICtrl.displayBudget(budget)
 
         }
 
@@ -214,6 +242,12 @@ const appController = (function(budgetCtrl, UICtrl) {
         return {
             init: function() {
                 console.log('App started!')
+                UICtrl.displayBudget({
+                    budget: 0,
+                    totalIncome: 0,
+                    totalExpense: 0,
+                    percentage: -1
+                })
                 setupEventListeners()
             }
         }
