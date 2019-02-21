@@ -100,6 +100,7 @@ const UIController = (function() {
         // UI Lists
         incomeList: document.querySelector('.income__list'),
         expenseList: document.querySelector('.expenses__list'),
+        container: document.querySelector('.container'),
         
         // UI Budget labels
         budgetValue: document.querySelector('.budget__value'),
@@ -200,6 +201,9 @@ const appController = (function(budgetCtrl, UICtrl) {
                         addItem()
                     }
                 })
+            
+            // Event listener for UI list container to run 'ctrlDeleteItem'
+                DOM.container.addEventListener('click', ctrlDeleteItem)
         }
 
         let updateBudget = () => {
@@ -214,7 +218,7 @@ const appController = (function(budgetCtrl, UICtrl) {
 
         }
 
-    // Handles the input data
+    // Adds new item based on input data
         let addItem = () => {
             let input, newItem
 
@@ -236,6 +240,22 @@ const appController = (function(budgetCtrl, UICtrl) {
                     updateBudget()
 
             } 
+        }
+
+    // Deletes items in income/expense lists
+        let ctrlDeleteItem = (event) => {
+
+            let itemID, splitID, type, ID
+
+            // Grab ID from parent item of the delete button
+            itemID = event.target.parentNode.parentNode.parentNode.parentNode.id
+
+            if (itemID) {
+                splitID = itemID.split('-')
+                type = splitID[0]
+                ID = splitID[1]
+            }
+
         }
 
     // Initialization
