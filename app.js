@@ -174,6 +174,11 @@ const UIController = (function() {
             }
         },
 
+        deleteListItem: (selectorID) => {
+            let deletedItem = document.getElementById(selectorID)
+            deletedItem.parentNode.removeChild(deletedItem)
+        },
+
         clearFields: () => {
             let fieldsArray
 
@@ -229,19 +234,20 @@ const appController = (function(budgetCtrl, UICtrl) {
             // Event listener for UI list container to run 'deleteItem'
                 DOM.container.addEventListener('click', deleteItem)
         }
-
+        
+    // Will run all budget updating related methods
         let updateBudget = () => {
             // 1. Calculate the budget
-                budgetCtrl.calculateBudget()
-
+            budgetCtrl.calculateBudget()
+            
             // 2. Return budget
-                let budget = budgetCtrl.getBudget()
-
+            let budget = budgetCtrl.getBudget()
+            
             // 3. Display budget on the UI
-                UICtrl.displayBudget(budget)
-
+            UICtrl.displayBudget(budget)
+            
         }
-
+        
     // Adds new item based on input data
         let addItem = () => {
             let input, newItem
@@ -265,7 +271,7 @@ const appController = (function(budgetCtrl, UICtrl) {
 
             } 
         }
-
+    
     // Deletes items in income/expense lists
         let deleteItem = (event) => {
 
@@ -285,12 +291,13 @@ const appController = (function(budgetCtrl, UICtrl) {
             budgetCtrl.deleteItem(type, id)
 
             // Delete item from UI
+            UICtrl.deleteListItem(itemID)
 
-            
             // Update budget after deletion
-            
+            updateBudget()
 
         }
+
 
     // Initialization
         return {
