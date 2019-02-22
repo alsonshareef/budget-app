@@ -60,6 +60,25 @@ const budgetController = (function() {
             // Returns the newItem to be used by other controllers
             return newItem
         },
+
+        deleteItem: (type, ID) => {
+            let idArray, index
+
+            // Create an array holding all existing items id's
+            idArray = data.allItems[type].map((item) => {
+                return item.id
+            })
+
+            // Create a variable holding the index of the element-to-be-deleted's id within idArray
+            index = idArray.indexOf(ID)
+
+            // Delete item from within the budget data structure at index
+            if (index !== -1) {
+                data.allItems[type].splice(index, 1)
+            }
+
+        },
+
         calculateBudget: () => {
             // 1. Calculate total income and expenses
                 calculateTotal('expense')
@@ -73,6 +92,7 @@ const budgetController = (function() {
                     data.percentage = Math.round((data.totals.expense / data.totals.income) * 100)
                 }
         },
+
         getBudget: () => {
             return {
                 budget: data.budget,
@@ -80,6 +100,10 @@ const budgetController = (function() {
                 totalExpense: data.totals.expense,
                 percentage: data.percentage
             }
+        },
+
+        test: () => {
+            return data
         }
     }
 
@@ -202,8 +226,8 @@ const appController = (function(budgetCtrl, UICtrl) {
                     }
                 })
             
-            // Event listener for UI list container to run 'ctrlDeleteItem'
-                DOM.container.addEventListener('click', ctrlDeleteItem)
+            // Event listener for UI list container to run 'deleteItem'
+                DOM.container.addEventListener('click', deleteItem)
         }
 
         let updateBudget = () => {
@@ -243,18 +267,28 @@ const appController = (function(budgetCtrl, UICtrl) {
         }
 
     // Deletes items in income/expense lists
-        let ctrlDeleteItem = (event) => {
+        let deleteItem = (event) => {
 
-            let itemID, splitID, type, ID
+            let itemID, splitID, type, id
 
             // Grab ID from parent item of the delete button
             itemID = event.target.parentNode.parentNode.parentNode.parentNode.id
 
+            // Create individual variables for type and id of item to be deleted
             if (itemID) {
                 splitID = itemID.split('-')
                 type = splitID[0]
-                ID = splitID[1]
+                id = Number(splitID[1])
             }
+
+            // Delete item from data structure in budgetController
+            budgetCtrl.deleteItem(type, id)
+
+            // Delete item from UI
+
+            
+            // Update budget after deletion
+            
 
         }
 
