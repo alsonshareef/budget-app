@@ -2,18 +2,37 @@
 // BUDGET CONTROLLER
 const budgetController = (function() {
 
-    let Expense = function(id, description, value) {
-        this.id = id
-        this.description = description
-        this.value = value
-    }
-
+    // Function constructors for items
     let Income = function(id, description, value) {
         this.id = id
         this.description = description
         this.value = value
+        this.percentage = -1
     }
 
+    let Expense = function(id, description, value) {
+        this.id = id
+        this.description = description
+        this.value = value
+        this.percentage = -1
+    }
+
+    // Expense prototype methods for calculating and retrieving individual expense percentages
+    Expense.prototype.calcPercentage = (totalIncome) => {
+        if (totalIncome > 0) {
+            this.percentage = this.value
+            console.log(this)
+        } else {
+            // console.log(this.value)
+            this.percentage = -1
+        }
+    }
+
+    Expense.prototype.getPercentage = () => {
+        return this.percentage
+    }
+
+    // Method for calculating income and expense totals
     let calculateTotal = (type) => {
         let sum = 0
         data.allItems[type].forEach((item) => {
@@ -23,6 +42,7 @@ const budgetController = (function() {
         data.totals[type] = sum
     }
 
+    // Object to store all budget data
     let data = {
         allItems: {
             income: [],
@@ -87,10 +107,23 @@ const budgetController = (function() {
             // 2. Calculate budget (income - expenses)
                 data.budget = data.totals.income - data.totals.expense
 
-            // 3. Calculate percentage of income spent (expenses / income)
+            // 3. Calculate percentage of total income spent (expenses / income)
                 if (data.totals.income > 0) {
                     data.percentage = Math.round((data.totals.expense / data.totals.income) * 100)
                 }
+        },
+
+        calculatePercentages: function() {
+            data.allItems.expense.forEach((item) => {
+                item.calcPercentage(data.totals.income)
+            })
+        },
+
+        getPercentages: function() {
+            let allPercentages = data.allItems.expense.map((item) => {
+                return item.getPercentage()
+            })
+            return allPercentages
         },
 
         getBudget: () => {
@@ -235,7 +268,7 @@ const appController = (function(budgetCtrl, UICtrl) {
                 DOM.container.addEventListener('click', deleteItem)
         }
         
-    // Will run all budget updating related methods
+    // Will update budget after an item is added or deleted
         let updateBudget = () => {
             // 1. Calculate the budget
             budgetCtrl.calculateBudget()
@@ -247,7 +280,20 @@ const appController = (function(budgetCtrl, UICtrl) {
             UICtrl.displayBudget(budget)
             
         }
-        
+    
+    // Will update all percentages after item is added or deleted
+        let updatePercentages = () => {
+            // Calculate percentages
+            budgetCtrl.calculatePercentages()
+
+            // Get percentages
+            let percentages = budgetCtrl.getPercentages()
+
+            // Update percentages
+            console.log(percentages)
+
+        }
+
     // Adds new item based on input data
         let addItem = () => {
             let input, newItem
@@ -268,6 +314,9 @@ const appController = (function(budgetCtrl, UICtrl) {
                 
                 // 5. Calculate and update budget
                     updateBudget()
+
+                // 6. Calculate and update percentages
+                    updatePercentages()
 
             } 
         }
@@ -295,6 +344,9 @@ const appController = (function(budgetCtrl, UICtrl) {
 
             // Update budget after deletion
             updateBudget()
+
+            // Calculate and update percentages
+            updatePercentages()
 
         }
 
