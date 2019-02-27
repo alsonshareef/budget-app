@@ -18,17 +18,15 @@ const budgetController = (function() {
     }
 
     // Expense prototype methods for calculating and retrieving individual expense percentages
-    Expense.prototype.calcPercentage = (totalIncome) => {
+    Expense.prototype.calcPercentage = function(totalIncome) {
         if (totalIncome > 0) {
-            this.percentage = this.value
-            console.log(this)
+            this.percentage = (this.value / totalIncome) * 100
         } else {
-            // console.log(this.value)
             this.percentage = -1
         }
     }
 
-    Expense.prototype.getPercentage = () => {
+    Expense.prototype.getPercentage = function() {
         return this.percentage
     }
 
