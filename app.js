@@ -17,10 +17,10 @@ const budgetController = (function() {
         this.percentage = -1
     }
 
-    // Expense prototype methods for calculating and retrieving individual expense percentages
+    // Expense prototype methods for calculating and retrieving individual item expense percentages
     Expense.prototype.calcPercentage = function(totalIncome) {
         if (totalIncome > 0) {
-            this.percentage = (this.value / totalIncome) * 100
+            this.percentage = Math.round((this.value / totalIncome) * 100)
         } else {
             this.percentage = -1
         }
@@ -161,7 +161,8 @@ const UIController = (function() {
         budgetValue: document.querySelector('.budget__value'),
         budgetIncome: document.querySelector('.budget__income--value'),
         budgetExpense: document.querySelector('.budget__expenses--value'),
-        budgetExpensePercentage: document.querySelector('.budget__expenses--percentage')
+        budgetExpensePercentage: document.querySelector('.budget__expenses--percentage'),
+        expensePercentages: '.item__percentage'
     }
 
     return {
@@ -238,6 +239,27 @@ const UIController = (function() {
 
         },
 
+        displayPercentages: (percentages) => {
+            // Store all expense item percentage html elements in a variable
+            let fields = document.querySelectorAll(DOMelements.expensePercentages)
+
+            // Custom forEach function for iterating through all percentage elements and changing text to their calculated expense percentage
+            let nodeListForEach = function(list, callback){
+                for (let i = 0; i < list.length; i++) {
+                    callback(list[i], i)
+                }
+            }
+
+            nodeListForEach(fields, (field, index) => {
+                if (percentages[index] > 0) {
+                    field.textContent = `${percentages[index]}%`
+                } else {
+                    field.textContent = '-'
+                }
+            })
+
+        },
+
         getDOMelements: function() {
             return DOMelements
         }
@@ -288,7 +310,7 @@ const appController = (function(budgetCtrl, UICtrl) {
             let percentages = budgetCtrl.getPercentages()
 
             // Update percentages
-            console.log(percentages)
+            UICtrl.displayPercentages(percentages)
 
         }
 
