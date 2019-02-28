@@ -161,8 +161,28 @@ const UIController = (function() {
         budgetValue: document.querySelector('.budget__value'),
         budgetIncome: document.querySelector('.budget__income--value'),
         budgetExpense: document.querySelector('.budget__expenses--value'),
-        budgetExpensePercentage: document.querySelector('.budget__expenses--percentage'),
-        expensePercentages: '.item__percentage'
+        budgetExpensePercentage: document.querySelector('.budget__expenses--percentage')
+    }
+
+    let formatNumber = function(num, type) {
+        let numSplit, integer, decimal
+
+        // Turn num into an absolute num with 2 decimals
+        num = Math.abs(num)
+        num = num.toFixed(2)
+
+        // Split num into integer and decimal variables
+        numSplit = num.split('.')
+        integer = numSplit[0]
+        decimal = numSplit[1]
+
+        // Add comma where necessary
+        if (integer.length > 3) {
+            integer = `${integer.substr(0, integer.length - 3)},${integer.substr(integer.length - 3, 3)}`
+        }
+
+        // Return formatted num
+        return `${(type === 'income' ? '+' : '-')} $${integer}.${decimal}`
     }
 
     return {
@@ -182,7 +202,7 @@ const UIController = (function() {
                 html = `<div class="item clearfix" id="income-${obj.id}">
                             <div class="item__description">${obj.description}</div>
                             <div class="right clearfix">
-                                <div class="item__value">+ ${obj.value}</div>
+                                <div class="item__value">${formatNumber(obj.value, type)}</div>
                                 <div class="item__delete">
                                     <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
                                 </div>
@@ -194,7 +214,7 @@ const UIController = (function() {
                 html = `<div class="item clearfix" id="expense-${obj.id}">
                             <div class="item__description">${obj.description}</div>
                             <div class="right clearfix">
-                                <div class="item__value">- ${obj.value}</div>
+                                <div class="item__value">${formatNumber(obj.value, type)}</div>
                                 <div class="item__percentage">21%</div>
                                 <div class="item__delete">
                                     <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
@@ -226,9 +246,9 @@ const UIController = (function() {
         displayBudget: (obj) => {
 
             // Convert budget UI text to data in budgetController
-            DOMelements.budgetValue.textContent = `$${obj.budget}`
-            DOMelements.budgetIncome.textContent = `+ ${obj.totalIncome}`
-            DOMelements.budgetExpense.textContent = `- ${obj.totalExpense}`
+            DOMelements.budgetValue.textContent = `${formatNumber(obj.budget, (obj.budget > 0 ? 'income' : 'expense'))}`
+            DOMelements.budgetIncome.textContent = `${formatNumber(obj.totalIncome, 'income')}`
+            DOMelements.budgetExpense.textContent = `${formatNumber(obj.totalExpense, 'expense')}`
             
             // Only displays expense percentage if income is greater than 0
             if (obj.percentage < 0) {
@@ -241,7 +261,7 @@ const UIController = (function() {
 
         displayPercentages: (percentages) => {
             // Store all expense item percentage html elements in a variable
-            let fields = document.querySelectorAll(DOMelements.expensePercentages)
+            let fields = document.querySelectorAll('.item__percentage')
 
             // Custom forEach function for iterating through all percentage elements and changing text to their calculated expense percentage
             let nodeListForEach = function(list, callback){
