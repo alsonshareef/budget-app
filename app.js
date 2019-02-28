@@ -187,6 +187,13 @@ const UIController = (function() {
         return `${(type === 'income' ? '+' : '-')} $${integer}.${decimal}`
     }
 
+    // Custom forEach function for iterating through a nodeList
+    let nodeListForEach = function(list, callback){
+        for (let i = 0; i < list.length; i++) {
+            callback(list[i], i)
+        }
+    }
+
     return {
         getInput: function() {
             return {
@@ -265,13 +272,6 @@ const UIController = (function() {
             // Store all expense item percentage html elements in a variable
             let fields = document.querySelectorAll('.item__percentage')
 
-            // Custom forEach function for iterating through all percentage elements and changing text to their calculated expense percentage
-            let nodeListForEach = function(list, callback){
-                for (let i = 0; i < list.length; i++) {
-                    callback(list[i], i)
-                }
-            }
-
             nodeListForEach(fields, (field, index) => {
                 if (percentages[index] > 0) {
                     field.textContent = `${percentages[index]}%`
@@ -294,6 +294,16 @@ const UIController = (function() {
             }
 
             DOMelements.budgetMonth.textContent = `${calcMonth()} ${year}`
+        },
+
+        changeColor: function() {
+            let fields = document.querySelectorAll(`.add__type, .add__description, .add__value`)
+
+            nodeListForEach(fields, (field) => {
+                field.classList.toggle('red-focus')
+            })
+
+            DOMelements.addButton.classList.toggle('red')
         },
 
         getDOMelements: function() {
@@ -322,6 +332,9 @@ const appController = (function(budgetCtrl, UICtrl) {
             
             // Event listener for UI list container to run 'deleteItem'
                 DOM.container.addEventListener('click', deleteItem)
+
+            // Event listener for changing input field colors depending on if an income or expense is being added
+                DOM.inputType.addEventListener('change', UICtrl.changeColor)
         }
         
     // Will update budget after an item is added or deleted
