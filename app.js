@@ -161,9 +161,11 @@ const UIController = (function() {
         budgetValue: document.querySelector('.budget__value'),
         budgetIncome: document.querySelector('.budget__income--value'),
         budgetExpense: document.querySelector('.budget__expenses--value'),
-        budgetExpensePercentage: document.querySelector('.budget__expenses--percentage')
+        budgetExpensePercentage: document.querySelector('.budget__expenses--percentage'),
+        budgetMonth: document.querySelector('.budget__title--month')
     }
 
+    // Will format number values to include decimals and commas
     let formatNumber = function(num, type) {
         let numSplit, integer, decimal
 
@@ -278,6 +280,20 @@ const UIController = (function() {
                 }
             })
 
+        },
+
+        displayMonth: function() {
+            let calcMonth, year
+
+            year = new Date().getFullYear()
+
+            calcMonth = function() {
+                let monthsArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                let month = monthsArray[new Date().getMonth()]
+                return month
+            }
+
+            DOMelements.budgetMonth.textContent = `${calcMonth()} ${year}`
         },
 
         getDOMelements: function() {
@@ -395,6 +411,7 @@ const appController = (function(budgetCtrl, UICtrl) {
         return {
             init: function() {
                 console.log('App started!')
+                UICtrl.displayMonth()
                 UICtrl.displayBudget({
                     budget: 0,
                     totalIncome: 0,
